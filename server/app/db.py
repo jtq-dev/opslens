@@ -1,8 +1,16 @@
+import os
 import sqlite3
 from .settings import settings
 
 def connect() -> sqlite3.Connection:
-    conn = sqlite3.connect(settings.db_path, check_same_thread=False)
+    db_path = settings.db_path
+
+    # Ensure parent folder exists (important for /var/data or any custom path)
+    parent = os.path.dirname(db_path)
+    if parent:
+        os.makedirs(parent, exist_ok=True)
+
+    conn = sqlite3.connect(db_path, check_same_thread=False)
     conn.row_factory = sqlite3.Row
     return conn
 
